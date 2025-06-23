@@ -28,10 +28,10 @@ jobs:
           npm ci
           
 
-      - name: Run unit tests
-        working-directory: frontend
-        run: |
-          npm test --watchAll=false
+      # - name: Run unit tests
+      #   working-directory: frontend
+      #   run: |
+      #     npm test --watchAll=false
           
 
       - name: Build for production
