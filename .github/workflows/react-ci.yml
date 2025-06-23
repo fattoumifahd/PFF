@@ -35,16 +35,16 @@ jobs:
         working-directory: frontend
         run: |
           yarn install --frozen-lockfile
-          # npm ci            # <-- remplace par ceci si tu utilises npm
+          
 
       - name: Run unit tests
         working-directory: frontend
         run: |
           yarn test --watchAll=false
-          # npm test -- --watchAll=false   # <-- version npm
+          
 
       - name: Build for production
         working-directory: frontend
         run: |
           yarn build
-          # npm run build      # <-- version npm
+          
