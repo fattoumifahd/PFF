@@ -20,22 +20,22 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'yarn'          
-          cache-dependency-path: frontend/yarn.lock
+          cache: 'nom'          
+          cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
         working-directory: frontend
         run: |
-          yarn install --frozen-lockfile
+          npm ci
           
 
       - name: Run unit tests
         working-directory: frontend
         run: |
-          yarn test --watchAll=false
+          npm test --watchAll=false
           
 
       - name: Build for production
         working-directory: frontend
         run: |
-          yarn build
+          npm run build
           
