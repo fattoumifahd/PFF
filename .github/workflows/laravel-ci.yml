@@ -73,4 +73,5 @@ jobs:
         run: php artisan migrate --force
 
       - name: Run PHPUnit
+        working-directory: backend
         run: vendor/bin/phpunit --colors=always --stop-on-failure
