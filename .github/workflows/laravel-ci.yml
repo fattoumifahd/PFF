@@ -52,6 +52,7 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
 
       - name: Install Composer dependencies
+        working-directory: backend
         run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
       - name: Copy .env and generate key
