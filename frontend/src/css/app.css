@@ -1,0 +1,221 @@
+html, body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Set default font and background */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    background-color: #3c1c3c
+  }
+
+  /* Header styles */
+  nav {
+    background-color: #ffffff;
+    color: #fff;
+    padding: 10px;
+    display: block;
+    height: 4rem;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    padding: 0 6rem;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  nav > *{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: large;
+    color: #2f75ae;
+    text-decoration: none;
+    margin-right: 40px;
+  }
+
+  /* Hero section styles */
+  .hero {
+    text-align: center;
+    background-color: #f8f8f8;
+    padding: 50px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  /* Featured rooms section styles */
+  .featured-rooms {
+    background-color: #fff;
+    padding: 30px;
+  }
+
+  .featured-rooms h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .room-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .room-card {
+    width: calc(33% - 20px);
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f8f8f8;
+  }
+
+  .room-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .room-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+
+  .room-card span {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  /* Footer styles */
+  footer {
+    background-color: #6a6767;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+
+  div.container {
+    max-width: 93%;
+    margin-top: 3rem;
+  }
+
+  div.firstSection {
+    background-color: #3c1c3c;
+  }
+  div.firstSection div.f p {
+    font-size: x-large;
+    font-weight: 500;
+    color: #f2f2f2;
+    padding: 104px 3rem;
+  }
+
+  div.firstSection div.l img {
+    /* padding: 20px 7rem; */
+    width: auto;
+    height: 23rem;
+    border-radius: 10px;
+  }
+
+  div.secondSection {
+    margin-top: 5rem;
+  }
+  div.secondSection div.f p {
+    font-size: x-large;
+    font-weight: 500;
+    color: #f2f2f2;
+    padding: 104px 3rem;
+  }
+
+  div.secondSection div.l img {
+    /* padding: 20px 7rem; */
+    width: auto;
+    height: 23rem;
+    border-radius: 10px;
+  }
+
+  footer {
+    background-color: rgb(37, 35, 35);
+  }
+
+  footer > div {
+    margin: 0.5rem 10%;
+  }
+
+  .fa-solid {
+    font-size: 2rem;
+  }
+
+  form.form {
+    padding: 1rem 7rem ;
+    background-color: #f8f9fa;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  form.form .form-group {
+    width: 75%;
+  }
+
+  form.form button {
+    width: 35%;
+  }
+
+  div.container.container-form {
+    width: 41% !important;
+    margin-top: 7rem;
+  }
+
+  div.wrapper {
+    width: 75% !important;
+    margin: 7rem auto 5rem auto;
+    background-color: transparent;
+  }
+
+  thead tr td{
+    width: calc(100% / 5);
+  }
+
+  /* admin ---- table rooms  */
+  table.table-rooms {
+    width: 60%;
+    margin: 0 auto;
+  }
+
+
+
+
+
+  /* admin ---- table rooms */
+
+
+/* user reservations table style  */
+
+table.table-user-reservations {
+  border-radius: 6px;
+  /* border: 1px; */
+  width: calc(100% - 25%);
+
+  margin: 10px auto;
+
+}
+table.table-user-reservations td {
+  border: none;
+}
+
+/* table.table-user-reservation thead tr { */
+  /* background-color: #f2f2f2; */
+/* } */

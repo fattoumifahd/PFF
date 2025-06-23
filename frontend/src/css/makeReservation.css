@@ -1,0 +1,43 @@
+/* ---------- layout wrapper ---------- */
+.container-form {
+  /* centre the block on wide screens but keep it fluid */
+  max-width: 540px;     /* tweak to taste */
+  margin: 2rem auto;
+  padding: 2rem 1.5rem;
+
+  /* subtle card effect */
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- form body ---------- */
+.form-group {
+  margin-bottom: 1.25rem;          /* room to breathe */
+}
+
+.form-control {
+  height: 2.75rem;                 /* keeps inputs equal height */
+  font-size: 0.95rem;
+}
+
+/* ---------- price / total row ---------- */
+.price-heading {
+  margin: 0.5rem 0 1rem;
+  font-weight: 600;
+}
+
+.total-row {
+  display: flex;                   /* equivalent to Bootstrap’s d-flex */
+  justify-content: space-between;  /* same as justify-content-between */
+  align-items: center;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-top: 1px dashed #dee2e6;
+}
+
+/* ---------- button ---------- */
+.btn-book {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
