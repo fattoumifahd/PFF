@@ -69,6 +69,7 @@ jobs:
           done
 
       - name: Run migrations
+        working-directory: backend
         run: php artisan migrate --force
 
       - name: Run PHPUnit
