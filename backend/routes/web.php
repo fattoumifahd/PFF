@@ -15,3 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Route::any('{any}', [Controller::class , 'index'])->where('any','.*');
+Route::get('/', function () {
+    return "ok";
+});
