@@ -3,7 +3,11 @@ name: React CI
 on:
   push:
     branches: [ master ]
+    paths: 
+      - 'frontend/**'
   pull_request:
+    paths: 
+      - 'frontend/**'
     branches: [ master ]
 
 jobs:
@@ -11,26 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
-      - uses: actions/checkout@v3
-
-    
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            ~/.cache/yarn
-          key: ${{ runner.os }}-node-${{ hashFiles('frontend/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
+      - name: chekour code
+        uses: actions/checkout@v3
      
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'yarn'          
+          cache-dependency-path: frontend/yarn.lock
       - name: Install dependencies
         working-directory: frontend
         run: |
