@@ -50,6 +50,7 @@ jobs:
         with:
           path: ~/.composer/cache
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          
 
       - name: Install Composer dependencies
         working-directory: backend
