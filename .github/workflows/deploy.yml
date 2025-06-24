@@ -1,0 +1,44 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [main]
+    paths: # only redeploy when images or manifests change
+      - "k8s/**"
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # --- make kubectl available -------------
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.30.0
+
+      - name: Write kubeconfig
+        run: |
+          echo "${KUBE_CONFIG}" | base64 -d > $HOME/.kube/config
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+      # --- patch manifests with the new SHA tags (simplest: kustomize edit) ----
+      - name: Set image tags
+        run: |
+          cd k8s
+          kustomize edit set image ghcr.io/ORG/REPO:backend-latest=ghcr.io/ORG/REPO:backend-${{ github.sha }}
+          kustomize edit set image ghcr.io/ORG/REPO:frontend-latest=ghcr.io/ORG/REPO:frontend-${{ github.sha }}
+          cat kustomization.yaml               # debug
+
+      # --- apply everything -------------------
+      - name: Deploy to cluster
+        run: |
+          kubectl apply -f k8s/
+          kubectl rollout status deploy/backend   -n pff
+          kubectl rollout status deploy/frontend  -n pff
