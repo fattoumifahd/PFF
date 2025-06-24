@@ -2,8 +2,8 @@ name: Deploy to Kubernetes
 
 on:
   push:
-    branches: [ master ]
-    paths: # only redeploy when images or manifests change
+    branches: [ master ]          # adapte si ta branche par défaut est 'main'
+    paths:
       - "k8s/**"
       - "backend/**"
       - "frontend/**"
@@ -14,33 +14,56 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    # ───────────────────────────────
+    # 1) Récupérer le code
+    # ───────────────────────────────
+    - uses: actions/checkout@v3
 
-      # --- make kubectl available -------------
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: v1.30.0
+    # ───────────────────────────────
+    # 2) Installer kubectl
+    # ───────────────────────────────
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: v1.30.0
 
-      - name: Write kubeconfig
-        run: |
-          mkdir -p "$HOME/.kube"
-          echo "${KUBE_CONFIG}" | base64 -d > $HOME/.kube/config
-          chmod 600 "$HOME/.kube/config"
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    # ───────────────────────────────
+    # 3) Injecter le kubeconfig
+    # ───────────────────────────────
+    - name: Write kubeconfig
+      run: |
+        mkdir -p "$HOME/.kube"
+        echo "${KUBE_CONFIG}" | base64 -d > "$HOME/.kube/config"
+        chmod 600 "$HOME/.kube/config"
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
-      # --- patch manifests with the new SHA tags (simplest: kustomize edit) ----
-      - name: Set image tags
-        run: |
-          cd k8s
-          kustomize edit set image ghcr.io/ORG/REPO:backend-latest=ghcr.io/ORG/REPO:backend-${{ github.sha }}
-          kustomize edit set image ghcr.io/ORG/REPO:frontend-latest=ghcr.io/ORG/REPO:frontend-${{ github.sha }}
-          cat kustomization.yaml               # debug
+    # ───────────────────────────────
+    # 4) Appliquer les manifests
+    # ───────────────────────────────
+    - name: Apply raw manifests
+      run: |
+        kubectl apply -f k8s/
 
-      # --- apply everything -------------------
-      - name: Deploy to cluster
-        run: |
-          kubectl apply -f k8s/
-          kubectl rollout status deploy/backend   -n pff
-          kubectl rollout status deploy/frontend  -n pff
+    # ───────────────────────────────
+    # 5) Mettre à jour les images
+    # ───────────────────────────────
+    - name: Patch image tags
+      run: |
+        # Nom d’image GHCR : ghcr.io/{owner}/{repo}:{backend|frontend}-{sha}
+        BACKEND_IMG="ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
+        FRONTEND_IMG="ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}"
+
+        echo "Updating backend to $BACKEND_IMG"
+        kubectl -n pff set image deployment/backend  backend=$BACKEND_IMG --record
+
+        echo "Updating frontend to $FRONTEND_IMG"
+        kubectl -n pff set image deployment/frontend web=$FRONTEND_IMG --record
+
+    # ───────────────────────────────
+    # 6) Attendre le déploiement
+    # ───────────────────────────────
+    - name: Wait for rollouts
+      run: |
+        kubectl rollout status deployment/backend  -n pff
+        kubectl rollout status deployment/frontend -n pff
