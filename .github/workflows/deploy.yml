@@ -2,7 +2,7 @@ name: Deploy to Kubernetes
 
 on:
   push:
-    branches: [main]
+    branches: [ master ]
     paths: # only redeploy when images or manifests change
       - "k8s/**"
       - "backend/**"
