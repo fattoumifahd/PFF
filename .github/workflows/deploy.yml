@@ -49,6 +49,7 @@ jobs:
     # 5) Mettre à jour les images
     # ───────────────────────────────
     - name: Patch image tags
+      shell : bash
       run: |
         # Nom d’image GHCR : ghcr.io/{owner}/{repo}:{backend|frontend}-{sha}
         BACKEND_IMG="ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
