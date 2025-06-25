@@ -49,7 +49,7 @@ jobs:
     # 5) Mettre à jour les images
     # ───────────────────────────────
     - name: Patch image tags
-      shell: pwsh           # <= run the script with PowerShell Core
+      shell: powershell           # <= run the script with PowerShell Core
       run: |
         # Compose the two image tags
         $backendImg  = "ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
