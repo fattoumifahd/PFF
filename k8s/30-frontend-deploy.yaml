@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/ORG/REPO:frontend-latest   
+          image: ghcr.io/fattoumifahd/pff:frontend-latest   
           ports:
             - containerPort: 80
           resources:
