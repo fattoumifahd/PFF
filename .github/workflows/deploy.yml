@@ -49,17 +49,17 @@ jobs:
     # 5) Mettre à jour les images
     # ───────────────────────────────
     - name: Patch image tags
-      shell : bash
+      shell: pwsh           # <= run the script with PowerShell Core
       run: |
-        # Nom d’image GHCR : ghcr.io/{owner}/{repo}:{backend|frontend}-{sha}
-        BACKEND_IMG="ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
-        FRONTEND_IMG="ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}"
+        # Compose the two image tags
+        $backendImg  = "ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
+        $frontendImg = "ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}"
 
-        echo "Updating backend to $BACKEND_IMG"
-        kubectl -n pff set image deployment/backend  backend=$BACKEND_IMG --record
+        Write-Host "Updating backend to $backendImg"
+        kubectl -n pff set image deployment/backend  backend=$backendImg --record
 
-        echo "Updating frontend to $FRONTEND_IMG"
-        kubectl -n pff set image deployment/frontend web=$FRONTEND_IMG --record
+        Write-Host "Updating frontend to $frontendImg"
+        kubectl -n pff set image deployment/frontend web=$frontendImg --record
 
     # ───────────────────────────────
     # 6) Attendre le déploiement
