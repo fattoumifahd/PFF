@@ -66,4 +66,4 @@ jobs:
     - name: Wait for rollouts
       run: |
         kubectl rollout status deployment/backend  -n pff
-        kubectl rollout status deployment/frontend -n pff
+        kubectl rollout status deployment/frontend -n pff 
