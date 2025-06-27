@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/fattoumifahd/PFF:backend-latest   # CI will patch tag
+          image: ghcr.io/fattoumifahd/pff:backend-latest   # CI will patch tag
           env:
             - name: DB_CONNECTION   # same keys you had in .env
               value: mysql

@@ -56,10 +56,10 @@ jobs:
         $frontendImg = "ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}"
 
         Write-Host "Updating backend to $backendImg"
-        kubectl -n PFF set image deployment/backend  backend=$backendImg --record
+        kubectl -n pff set image deployment/backend  backend=$backendImg --record
 
         Write-Host "Updating frontend to $frontendImg"
-        kubectl -n PFF set image deployment/frontend web=$frontendImg --record
+        kubectl -n pff set image deployment/frontend web=$frontendImg --record
 
     # ───────────────────────────────
     # 6) Attendre le déploiement
