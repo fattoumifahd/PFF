@@ -12,13 +12,12 @@ spec:
       labels: { app: frontend }
     spec:
       containers:
-        - name: web
-          image: ghcr.io/fattoumifahd/pff:frontend-latest   
+        - name: web                     # match set-image
+          image: ghcr.io/fattoumifahd/pff:frontend-latest
           ports:
             - containerPort: 80
-          resources:
-            requests: { cpu: "50m", memory: "128Mi" }
-            limits:   { cpu: "200m", memory: "256Mi" }
+      # imagePullSecrets:
+      #   - name: ghcr-secret           # only if repo is private
 ---
 apiVersion: v1
 kind: Service
@@ -26,7 +25,6 @@ metadata:
   name: frontend
   namespace: pff
 spec:
-  type: ClusterIP
   selector: { app: frontend }
   ports:
     - port: 80

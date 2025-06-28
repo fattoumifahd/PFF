@@ -13,30 +13,14 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: mysql:8.0
+          image: mysql:8.0            # official image
           ports:
             - containerPort: 3306
           env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_ROOT_PASSWORD
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_PASSWORD
-            - name: MYSQL_USER
-              value: "root"
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"            # dev-only, no root pwd
             - name: MYSQL_DATABASE
-              value: "pff"
-          livenessProbe:
-            exec: { command: ["mysqladmin","ping","-p${MYSQL_ROOT_PASSWORD}"] }
-            periodSeconds: 10
-          readinessProbe:
-            exec: { command: ["mysqladmin","ping","-p${MYSQL_ROOT_PASSWORD}"] }
-            periodSeconds: 10
+              value: pff              # auto-created
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
@@ -62,8 +46,8 @@ metadata:
   name: mysql
   namespace: pff
 spec:
-  type: ClusterIP
   selector: { app: mysql }
   ports:
     - port: 3306
       targetPort: 3306
+      protocol: TCP

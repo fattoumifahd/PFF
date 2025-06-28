@@ -12,13 +12,15 @@ spec:
       labels: { app: backend }
     spec:
       containers:
-        - name: backend
-          image: ghcr.io/fattoumifahd/pff:backend-latest   # CI will patch tag
+        - name: backend                 # match set-image
+          image: ghcr.io/fattoumifahd/pff:backend-latest
+          ports:
+            - containerPort: 9000       # php-fpm listens here
           env:
-            - name: DB_CONNECTION   # same keys you had in .env
+            - name: DB_CONNECTION
               value: mysql
             - name: DB_HOST
-              value: mysql
+              value: mysql              # service name above
             - name: DB_PORT
               value: "3306"
             - name: DB_DATABASE
@@ -26,15 +28,10 @@ spec:
             - name: DB_USERNAME
               value: root
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_PASSWORD
-          ports:
-            - containerPort: 9000   # php-fpm listens here
-          resources:
-            requests: { cpu: "100m", memory: "256Mi" }
-            limits:   { cpu: "250m", memory: "512Mi" }
+              value: ""                 # empty because we allowed empty pwd
+      # Add this block only if your GHCR repo is private:
+      # imagePullSecrets:
+      #   - name: ghcr-secret
 ---
 apiVersion: v1
 kind: Service
@@ -42,7 +39,6 @@ metadata:
   name: backend
   namespace: pff
 spec:
-  type: ClusterIP
   selector: { app: backend }
   ports:
     - port: 9000

@@ -2,7 +2,7 @@ name: Deploy to Kubernetes
 
 on:
   push:
-    branches: [ master ]          # adapte si ta branche par défaut est 'main'
+    branches: [ master ]         
     paths:
       - "k8s/**"
       - "backend/**"
@@ -14,42 +14,24 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    # ───────────────────────────────
-    # 1) Récupérer le code
-    # ───────────────────────────────
     - uses: actions/checkout@v3
 
-    # ───────────────────────────────
-    # 2) Installer kubectl
-    # ───────────────────────────────
+  
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
       with:
         version: v1.30.0
 
-    # ───────────────────────────────
-    # 3) Injecter le kubeconfig
-    # ───────────────────────────────
-    # - name: Write kubeconfig
-      # run: |
-      #   mkdir -p "$HOME/.kube"
-      #   echo "${KUBE_CONFIG}" | base64 -d > "$HOME/.kube/config"
-      #   chmod 600 "$HOME/.kube/config"
-      # env:
-      #   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+  
 
-    # ───────────────────────────────
-    # 4) Appliquer les manifests
-    # ───────────────────────────────
+
     - name: Apply raw manifests
       run: |
         kubectl apply -f k8s/
 
-    # ───────────────────────────────
-    # 5) Mettre à jour les images
-    # ───────────────────────────────
+ 
     - name: Patch image tags
-      shell: powershell           # <= run the script with PowerShell Core
+      shell: powershell           
       run: |
         # Compose the two image tags
         $backendImg  = "ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
@@ -61,9 +43,6 @@ jobs:
         Write-Host "Updating frontend to $frontendImg"
         kubectl -n pff set image deployment/frontend web=$frontendImg --record
 
-    # ───────────────────────────────
-    # 6) Attendre le déploiement
-    # ───────────────────────────────
     - name: Wait for rollouts
       run: |
         kubectl rollout status deployment/backend  -n pff
