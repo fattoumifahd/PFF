@@ -9,6 +9,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
@@ -17,15 +18,13 @@ jobs:
           MYSQL_DATABASE: testing
         ports:
           - 3306:3306
-        # allow MySQL a bit of startup time
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
 
     env:
-      # match your config/database.php defaults
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
@@ -34,45 +33,45 @@ jobs:
       DB_PASSWORD: secret
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          extensions: mbstring, pdo_mysql, xml, curl, zip
-          ini-values: post_max_size=256M, memory_limit=512M
-          coverage: none
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, pdo_mysql, xml, curl, zip
+        ini-values: post_max_size=256M, memory_limit=512M
+        coverage: none
 
-      - name: Get Composer cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          
+    - name: Cache composer
+      uses: actions/cache@v3
+      with:
+        path: ~/.composer/cache
+        key: ${{ runner.os }}-composer-${{ hashFiles('backend/composer.lock') }}
 
-      - name: Install Composer dependencies
-        working-directory: backend
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+    - name: Install composer deps
+      working-directory: backend
+      run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Copy .env and generate key
-        working-directory: backend
-        run: |
-          cp .env.example .env
-          php artisan key:generate
+    - name: Prepare .env
+      working-directory: backend
+      run: |
+        cp .env.example .env
+        php artisan key:generate
 
-      - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..15}; do
-            mysql -h127.0.0.1 -uroot -psecret -e "SELECT 1" && break
-            sleep 2
-          done
+    - name: Wait up to 30s for MySQL
+      run: |
+        for i in {1..15}; do
+          mysql -h127.0.0.1 -uroot -psecret -e "SELECT 1" && exit 0
+          sleep 2
+        done
+        echo "MySQL never became ready" && exit 1
 
-      - name: Run migrations
-        working-directory: backend
-        run: php artisan migrate --force
+    - name: Run migrations
+      working-directory: backend
+      run: php artisan migrate --seed --force
 
-      - name: Run PHPUnit
-        working-directory: backend
-        run: vendor/bin/phpunit --colors=always --stop-on-failure
+    - name: PHPUnit tests
+      working-directory: backend
+      run: vendor/bin/phpunit --colors=always --stop-on-failure

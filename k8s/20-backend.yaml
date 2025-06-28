@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: backend                 # match set-image
-          image: ghcr.io/fattoumifahd/pff:backend-latest
+          image: ghcr.io/fattoumifahd/pff:backend-8207d44
           ports:
             - containerPort: 9000       # php-fpm listens here
           env:

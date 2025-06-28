@@ -2,7 +2,7 @@ name: Deploy to Kubernetes
 
 on:
   push:
-    branches: [ master ]         
+    branches: [ master ]
     paths:
       - "k8s/**"
       - "backend/**"
@@ -11,39 +11,43 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted          # ← your Windows runner
 
     steps:
-    - uses: actions/checkout@v3
+      # 1) Checkout repo
+      - uses: actions/checkout@v4
 
-  
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: v1.30.0
+      # 2) Ensure kubectl v1.30 is on PATH
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.30.0
 
-  
+      # 3) Apply (or update) all manifests
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f k8s/
 
+      # 4) Patch the images with current commit SHA
+      - name: Patch image tags
+        shell: powershell
+        run: |
+          # short 8-char SHA
+          $shortSha = $Env:GITHUB_SHA.Substring(0,8)
 
-    - name: Apply raw manifests
-      run: |
-        kubectl apply -f k8s/
+          # repo name is always lower-case
+          $repo = "${Env:GITHUB_REPOSITORY}".ToLower()   # e.g. fattoumifahd/pff
 
- 
-    - name: Patch image tags
-      shell: powershell           
-      run: |
-        # Compose the two image tags
-        $backendImg  = "ghcr.io/${{ github.repository }}:backend-${{ github.sha }}"
-        $frontendImg = "ghcr.io/${{ github.repository }}:frontend-${{ github.sha }}"
+          $backendImg  = "ghcr.io/$repo:backend-$shortSha"
+          $frontendImg = "ghcr.io/$repo:frontend-$shortSha"
 
-        Write-Host "Updating backend to $backendImg"
-        kubectl -n pff set image deployment/backend  backend=$backendImg --record
+          Write-Host "Updating backend image to $backendImg"
+          kubectl -n pff set image deployment/backend  backend=$backendImg  --record
 
-        Write-Host "Updating frontend to $frontendImg"
-        kubectl -n pff set image deployment/frontend web=$frontendImg --record
+          Write-Host "Updating frontend image to $frontendImg"
+          kubectl -n pff set image deployment/frontend web=$frontendImg     --record
 
-    - name: Wait for rollouts
-      run: |
-        kubectl rollout status deployment/backend  -n pff
-        kubectl rollout status deployment/frontend -n pff 
+      # 5) Wait (max 3 min) for both rollouts
+      - name: Wait for rollouts
+        run: |
+          kubectl rollout status deployment/backend  -n pff --timeout=180s
+          kubectl rollout status deployment/frontend -n pff --timeout=180s
